@@ -51,6 +51,45 @@ services:
     depends_on:
       db:
         condition: service_started
+  vault:
+    image: hashicorp/vault:latest
+    container_name: vault-demo
+    command:
+      - server
+    restart: always
+    cap_add:
+      - IPC_LOCK
+    environment:
+      VAULT_ADDR: http://127.0.0.1:8200
+      VAULT_LOCAL_CONFIG: >-
+        {
+            "api_addr": "http://127.0.0.1:8200",
+            "ui": true,
+            "disable_clustering": true,
+            "log_level": "info",
+            "storage": {
+              "postgresql": {
+                "connection_url": "postgres://postgres:123@db:5432/demo?sslmode=disable",
+                "table": "vault_kv_store",
+                "ha_enabled": true,
+                "ha_table": "vault_ha_locks"
+              }
+            },
+            "default_lease_ttl": "168h",
+            "listener": {
+                "tcp": {
+                    "address": "0.0.0.0:8200",
+                    "tls_disable": "1"
+                }
+            },
+            "max_lease_ttl": "720h"
+        }
+    ports:
+      - "8200:8200"
+    depends_on:
+      - db
+    networks:
+      - demo_network
 networks:
   demo_network:
     driver: bridge
