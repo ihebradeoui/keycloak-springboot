@@ -12,9 +12,9 @@ import java.io.IOException;
 public class KeycloakJwtDecoder {
 
     @Bean
-    public JwtDecoder jwtDecoder(RestTemplateBuilder builder) throws IOException {
+    public JwtDecoder jwtDecoder(RestTemplateBuilder builder) {
 
-        return NimbusJwtDecoder.withJwkSetUri("http://localhost:8081/realms/demo/protocol/openid-connect/certs")
+        return NimbusJwtDecoder.withJwkSetUri("https://dev-2.newlogin.net/realms/newlogin/protocol/openid-connect/certs")
                 .build();
 }
 }
