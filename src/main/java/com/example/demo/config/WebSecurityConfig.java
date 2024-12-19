@@ -1,12 +1,12 @@
 package com.example.demo.config;
 
+import com.example.demo.config.acl.CustomAclService;
+import com.example.demo.config.acl.CustomPermissionEvaluator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
-import org.springframework.security.acls.AclPermissionEvaluator;
-import org.springframework.security.acls.jdbc.JdbcMutableAclService;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -36,9 +36,9 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public MethodSecurityExpressionHandler defaultMethodSecurityExpressionHandler(JdbcMutableAclService aclService) {
+    public MethodSecurityExpressionHandler defaultMethodSecurityExpressionHandler(CustomAclService aclService) {
         DefaultMethodSecurityExpressionHandler expressionHandler = new DefaultMethodSecurityExpressionHandler();
-        AclPermissionEvaluator permissionEvaluator = new AclPermissionEvaluator(aclService);
+        CustomPermissionEvaluator permissionEvaluator = new CustomPermissionEvaluator(aclService);
         expressionHandler.setPermissionEvaluator(permissionEvaluator);
         return expressionHandler;
     }

@@ -6,8 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.acls.domain.*;
 import org.springframework.security.acls.jdbc.BasicLookupStrategy;
-import org.springframework.security.acls.jdbc.JdbcMutableAclService;
-import org.springframework.security.acls.jdbc.LookupStrategy;
 import org.springframework.security.acls.model.PermissionGrantingStrategy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -22,10 +20,7 @@ public class AclConfig {
         this.dataSource = dataSource;
     }
 
-    @Bean
-    public JdbcMutableAclService aclService() {
-        return new JdbcMutableAclService(dataSource, lookupStrategy(), aclCache());
-    }
+
     @Bean
     public AclAuthorizationStrategy aclAuthorizationStrategy() {
         return new AclAuthorizationStrategyImpl(new SimpleGrantedAuthority("ROLE_ADMIN"));
@@ -43,18 +38,13 @@ public class AclConfig {
     }
 
     @Bean
-    public LookupStrategy lookupStrategy() {
-        BasicLookupStrategy lookupStrategy =  new BasicLookupStrategy(
+    public BasicLookupStrategy lookupStrategy() {
+        return new BasicLookupStrategy(
                 dataSource,
                 aclCache(),
                 aclAuthorizationStrategy(),
                 new ConsoleAuditLogger()
         );
-        lookupStrategy.setLookupObjectIdentitiesWhereClause(
-                "(cast(acl_object_identity.object_id_identity as varchar) = ? and acl_class.class = ?)"
-
-        );
-    return lookupStrategy;
     }
 
 }

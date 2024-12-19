@@ -31,7 +31,8 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=123
       - POSTGRES_DB=demo
-    command: 'docker-entrypoint.sh postgres'
+      - POSTGRES_LOGGING= all
+    command: 'docker-entrypoint.sh postgres -c log_statement=all'
     volumes:
       - ./docker/db/shared_data:/var/lib/postgresql/data
 #      - ./docker/db/script:/docker-entrypoint-initdb.d
@@ -45,12 +46,20 @@ services:
     image: adminer
     restart: always
     ports:
-      - 8081:8080
+      - 8082:8080
     networks:
       - demo_network
     depends_on:
       db:
         condition: service_started
+  cache:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning
+    networks:
+      - demo_network
 networks:
   demo_network:
     driver: bridge
